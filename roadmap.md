@@ -4,8 +4,15 @@ https://tutorials.ubuntu.com/tutorial/tutorial-create-a-usb-stick-on-windows?_ga
 image scraping
 https://www.pyimagesearch.com/2015/10/12/scraping-images-with-python-and-scrapy/
 
+https://github.com/sushrutt12/scrapingimages
+
 getty images
 https://github.com/sushrutt12/scrapingimages
+
+Look up XPath tutorial
+
+Spiders
+https://docs.scrapy.org/en/latest/topics/spiders.html
 
 Python 3.6.6
 
