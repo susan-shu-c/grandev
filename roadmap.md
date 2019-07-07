@@ -1,3 +1,15 @@
+Jul_06_2019
+
+Testing using scrapy shell!!!
+
+```console
+scrapy shell 'https://www.gettyimages.ca/photos/ariana-grande?family=editorial&phrase=ariana%20grande&sort=best#license'
+```
+
+```console
+response.css('img').xpath('@src').getall()
+```
+
 get ubuntu
 https://tutorials.ubuntu.com/tutorial/tutorial-create-a-usb-stick-on-windows?_ga=2.113031757.891330654.1561860246-2033029163.1561860246#0
 
