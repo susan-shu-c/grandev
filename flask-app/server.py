@@ -4,6 +4,10 @@ from flask import Flask, flash, render_template, redirect, request, url_for
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "supertopsecretprivatekey"
 
+@app.route('/images/<filename>', methods=['GET'])
+def images(filename):
+    return send_file(os.path.join('/tmp/uploads/',filename))
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'GET':
@@ -28,7 +32,7 @@ def home():
             passed = False
             try:
                 filename = image_file.filename
-                filepath = os.path.join('/tmp/uploads/', filename)
+                filepath = os.path.join(os.path.expanduser('~'),'/tmp/uploads/', filename)
                 image_file.save(filepath)
                 passed = True
             except Exception:
@@ -42,6 +46,8 @@ def home():
 
 ### COMBAK
 if __name__ == "__main__":
-    app.run('127.0.0.1')
+    # app.run('127.0.0.1')
+    app.debug = True
+    app.run()
 
 
