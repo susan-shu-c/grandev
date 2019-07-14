@@ -10,7 +10,7 @@ class Crawler(scrapy.Spider):
     def parse(self, response):
         Crawler.pages+=1
         url = response.xpath('//*[@id="assets"]/article')
-        data = url.xpath('//*[@="assets"]/article').extract()
+        data = url.xpath('//*[@id="assets"]/article').extract()
 
         for href in data:
             imglink = href[href.find('src'):]
@@ -18,7 +18,7 @@ class Crawler(scrapy.Spider):
             title = href[href.find('target'):]
             title = title[8:title.find('>')-1]
             now = datetime.datetime.now()
-            yield MyImage(title=title, createDate=now, image_urls=[imglink])
+            yield ImagespiderItem(title=title, createDate=now, image_urls=[imglink])
 
         if Crawler.pages !=2:
             next = response.xpath('//*[@id="next-gallery-page"]')
