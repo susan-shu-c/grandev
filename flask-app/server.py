@@ -31,7 +31,7 @@ def home():
         if image_file:
             passed = False
             try:
-                filename = image_file.filename
+                filename = secure_filename(image_file.filename)
                 filepath = os.path.join(os.path.expanduser('~'),'/tmp/uploads/', filename)
                 image_file.save(filepath)
                 passed = True
@@ -39,7 +39,7 @@ def home():
                 passed = False
 
             if passed:
-                return redirect(url_for('predict', filename=filename))
+                return redirect(url_for('predict'), filename=filename)
             else:
                 flash('An error occurred, try again.')
                 return redirect(request.url)
