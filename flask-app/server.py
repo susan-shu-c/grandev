@@ -28,7 +28,7 @@ def home():
             passed = False
             try:
                 filename = image_file.filename
-                filepath = os.path.join('/tmp/fuzzvis/', filename)
+                filepath = os.path.join('/tmp/uploads/', filename)
                 image_file.save(filepath)
                 passed = True
             except Exception:
@@ -40,5 +40,8 @@ def home():
                 flash('An error occurred, try again.')
                 return redirect(request.url)
 
-...
+### COMBAK
+if __name__ == "__main__":
+    app.run('127.0.0.1')
+
 
