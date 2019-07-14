@@ -1,5 +1,14 @@
 # Jul_14_2019
 
+## Complete guide to set up
+
+```console
+cd ~/grandev_venv/bin
+source activate
+cd ~/Documents/Projects/grandev/imagespider
+scrapy shell [url]
+```
+
 Awkwardly forgot how to launch the virtual environment.
 
 `whereis python3`
@@ -16,8 +25,20 @@ Awkwardly forgot how to launch the virtual environment.
 `pip3 list` -- list all packages
 `scrapy crawl image_spider -o logging.json` -- default crawlling command
 
+### Next steps
+
+0. I have images now
+1. Basic af classifier - prolly just grab a cat one to train (deal with accuracy later, the main this is an MVP to deploy)
+2. Figure out deployment with Flask (Go? - **Wishlist item**, not **MVP** item)
+
+**Stretch goals**
+1. GO
+2. Higher accuracy, more sophisticated architecture
+3. User input on accuracy
+
 ## p 
 11
+111
 
 # Jul_06_2019
 
@@ -36,6 +57,9 @@ response.css('img').xpath('@src').getall()
 
 get ubuntu
 https://tutorials.ubuntu.com/tutorial/tutorial-create-a-usb-stick-on-windows?_ga=2.113031757.891330654.1561860246-2033029163.1561860246#0
+
+DOCKER + FLASK
+https://medium.com/@mtngt/docker-flask-a-simple-tutorial-bbcb2f4110b5
 
 image scraping
 https://www.pyimagesearch.com/2015/10/12/scraping-images-with-python-and-scrapy/
