@@ -1,6 +1,27 @@
-Jul_06_2019
+# Jul_14_2019
 
-Testing using scrapy shell!!!
+Awkwardly forgot how to launch the virtual environment.
+
+`whereis python3`
+
+`cd /usr/bin/` - useless
+
+`python3 -m venv grandev_venv`
+`. grandev_venv/bin/activate`
+
+## Virtual environment is here!!!
+
+`cd ~/grandev_venv/bin` -- I just put it in home folder. Ignore `grandev` folder?
+`source activate`
+`pip3 list` -- list all packages
+`scrapy crawl image_spider -o logging.json` -- default crawlling command
+
+## p 
+11
+
+# Jul_06_2019
+
+Testing using scrapy shell!!! - REMEMBER TO USE VENV
 
 ```console
 scrapy shell 'https://www.gettyimages.ca/photos/ariana-grande?family=editorial&phrase=ariana%20grande&sort=best#license'
@@ -9,6 +30,9 @@ scrapy shell 'https://www.gettyimages.ca/photos/ariana-grande?family=editorial&p
 ```console
 response.css('img').xpath('@src').getall()
 ```
+
+# TODO: 
+- SSH into GitHub
 
 get ubuntu
 https://tutorials.ubuntu.com/tutorial/tutorial-create-a-usb-stick-on-windows?_ga=2.113031757.891330654.1561860246-2033029163.1561860246#0
