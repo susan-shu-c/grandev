@@ -1,12 +1,25 @@
 import os
-from flask import Flask, flash, render_template, redirect, request, url_for
+
+from numpy import stack
+from imageio import imread
+from keras.models import load_model
+from PIL import Image
+from flask import (Flask, flash, render_template, redirect, request, session,
+                   send_file, url_for)
+from werkzeug.utils import secure_filename
+
+from utils import (is_allowed_file, generate_barplot, generate_random_name,
+                   make_thumbnail)
+
+NEURAL_NET_MODEL_PATH = os.environ['NEURAL_NET_MODEL_PATH']
+NEURAL_NET = load_model(NEURAL_NET_MODEL_PATH)
+NEURAL_NET._make_predict_function() 
+    # as suggested attempt to fix bug with `model._make_predict_function()`
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "supertopsecretprivatekey"
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+app.config['UPLOAD_FOLDER'] = os.environ['UPLOAD_FOLDER']
 
-@app.route('/images/<filename>', methods=['GET'])
-def images(filename):
-    return send_file(os.path.join('/tmp/uploads/',filename))
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -27,27 +40,66 @@ def home():
             flash('No file was uploaded.')
             return redirect(request.url)
 
-        # if the file is "legit"
-        if image_file:
-            passed = False
-            try:
-                filename = secure_filename(image_file.filename)
-                filepath = os.path.join(os.path.expanduser('~'),'/tmp/uploads/', filename)
-                image_file.save(filepath)
-                passed = True
-            except Exception:
-                passed = False
-
+        # check if the file is "legit"
+        if image_file and is_allowed_file(image_file.filename):
+            filename = secure_filename(generate_random_name(image_file.filename))
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(filepath)
+            # HACK: Defer this to celery, might take time
+            passed = make_thumbnail(filepath)
             if passed:
-                return redirect(url_for('predict'), filename=filename)
+                return redirect(url_for('predict', filename=filename))
             else:
-                flash('An error occurred, try again.')
                 return redirect(request.url)
 
-### COMBAK
+
+@app.errorhandler(500)
+def server_error(error):
+    """ Server error page handler """
+    return render_template('error.html'), 500
+
+
+@app.route('/images/<filename>')
+def images(filename):
+    """ Route for serving uploaded images """
+    if is_allowed_file(filename):
+        return send_file(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    else:
+        flash("File extension not allowed.")
+        return redirect(url_for('home'))
+
+
+@app.route('/predict/<filename>')
+def predict(filename):
+    """ After uploading the image, show the prediction of the uploaded image
+    in barchart form
+    """
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    image_url = url_for('images', filename=filename)
+    image_mtx = imread(image_path)
+    image_mtx = image_mtx.astype(float) / 255.
+
+    try:
+        # HACK: imageio seems to automatically infer grayscale images as a
+        # 2d tensor, not 3d; need to support this logic. For now just duplicate
+        # the first channel.
+        image_mtx = image_mtx[:, :, :3]
+    except IndexError:
+        image_mtx = stack((image_mtx, image_mtx, image_mtx), axis=2)
+
+    image_mtx = image_mtx.reshape(-1, 128, 128, 3)
+    # TODO: Celery defer this as it may take some time
+    predictions = NEURAL_NET.predict_proba(image_mtx)
+    # TODO: Barplots with hover functionality
+    script, div = generate_barplot(predictions)
+
+    return render_template(
+        'predict.html',
+        plot_script=script,
+        plot_div=div,
+        image_url=image_url
+    )
+
 if __name__ == "__main__":
-    # app.run('127.0.0.1')
     app.debug = True
     app.run()
-
-
