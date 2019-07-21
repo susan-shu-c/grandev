@@ -9,8 +9,7 @@ from bokeh.plotting import figure
 
 ALLOWED_EXTENSIONS = set(['png', 'bmp', 'jpg', 'jpeg', 'gif'])
 LETTER_SET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-IMAGE_LABELS = ['Headphone', 'Mouse', 'Camera', 'Smartphone',
-                'Glasses', 'Shoes', 'Watch', 'Laptop']
+IMAGE_LABELS = ['ARIANA GRANDE', 'ARIANA VENTI (NOT ARI)']
 
 def is_allowed_file(filename):
     """ Checks if a filename's extension is acceptable """

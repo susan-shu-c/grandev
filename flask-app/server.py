@@ -105,12 +105,23 @@ def predict(filename):
     
     predictions = CLASSINATOR.predict(image_mtx.reshape(-1, 150, 150, 3))
     # TODO: Barplots with hover functionality
-    script, div = generate_barplot(predictions)
+
+    if predictions <0.5:
+        ari_answer = "YES, IT IS ARIANA GRANDE"
+    elif predictions >=0.5:
+        ari_answer = "SORRY, ARIANA VENTI (NOT GRANDE)"
+    else:
+        ari_answer = "OOPS! Ariana void (error)"
+
+
+    # OLD - BOKEH STUFF - 
+    # script, div = generate_barplot(predictions)
 
     return render_template(
         'predict.html',
-        plot_script=script,
-        plot_div=div,
+        # plot_script=script,
+        # plot_div=div,
+        ari_answer = ari_answer,
         image_url=image_url
     )
 
