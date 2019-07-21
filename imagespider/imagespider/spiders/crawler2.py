@@ -10,7 +10,7 @@ class Crawler(scrapy.Spider):
 
     def parse(self, response):
         Crawler.pages+=1
-        # url = response.xpath('//*[@id="assets"]/article')
+
         data = response.css('img').xpath('@src').getall() # this should be list of urls (string)
 
         for href in data:
@@ -21,8 +21,3 @@ class Crawler(scrapy.Spider):
 
         if Crawler.pages < Crawler.page_limit:
             yield scrapy.Request("https://www.gettyimages.ca/photos/ariana-grande?family=editorial&page=" + str(Crawler.pages) + "&phrase=ariana%20grande&sort=best#license", self.parse)
-
-        # if Crawler.pages !=2:
-            # next = response.xpath('//*[@id="next-gallery-page"]')
-            # if next is not None:
-                # yield scrapy.Request("https://www.gettyimages.com"+next.xpath("@href").extract_first(), self.parse)
