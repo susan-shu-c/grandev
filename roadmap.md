@@ -1,14 +1,63 @@
+# Jul_21_2019
+
+* Create .hdf5 training dataset (works better with vanilla model)
+
+* Got basic vanilla baseline model to work
+
+* Now working on using Keras/Tensorflow
+
+* Keras has different basic way of importing dataset - just put the files in diff folders (note the subdirectory structure, and need file extension .jpg)
+
+```python
+import h5py
+f = h5py.File('../training_dataset.hdf5', 'r')
+list(f.keys())
+out: ['test_img', 'test_labels', 'train_img', 'train_labels']
+import matplotlib.pylab as plb
+```
+
+
+
 # Jul_14_2019
+
+> TODO: figure out how to package my own trained model and load it.
+
+See: https://machinelearningmastery.com/save-load-keras-deep-learning-models/
+
+* Got the image upload to work!
 
 ## Load a model
 ```python
-from keras.models import load_model
 from imageio import imread
-model = load_model('[file_path]')
-image = imread('/home/susan/Documents/Projects/grandev/flask-app/test_small.jpeg')
+import cv2
+
+from keras.models import load_model
+from keras.models import model_from_json
+import json
+
+with open('classinator_archi_v0.json','r') as f:
+    model_json = json.load(f)
+
+model = model_from_json(model_json)
+model.load_weights('/home/susan/Documents/Projects/grandev/flask-app/model_temp/classinator_v0.h5')
+image = imread('/home/susan/Documents/Projects/grandev/flask-app/test_upload.jpg')
+
+image = cv2.resize(image, (150, 150), interpolation=cv2.INTER_CUBIC)
 image = image / 255. # normalize pixels to between 0 and 1 as this is how model was originally trained
-model.predict(image.reshape(-1, 128, 128, 3)) # outputs the probability of image being in each class.
+model.predict(image.reshape(-1, 150, 150, 3)) # outputs the probability of image being in each class.
 ```
+
+
+```console
+export NEURAL_NET_WEIGHTS_PATH='/home/susan/Documents/Projects/grandev/flask-app/model_temp/classinator_v0.h5'
+export NEURAL_NET_MODEL_PATH='/home/susan/Documents/Projects/grandev/flask-app/model_temp/classinator_archi_v0.json'
+
+export SECRET_KEY="placeholderkey"
+
+export UPLOAD_FOLDER="/home/susan/Documents/Projects/grandev/flask-app/static/temp"
+``` 
+-- the above to pass into `server.py` arguments
+
 
 `model = load_model('/home/susan/Documents/Projects/grandev/flask-app/model_temp/SouqNet128v2_gpu.h5')` # copy paste ease
 
@@ -71,7 +120,7 @@ get ubuntu
 https://tutorials.ubuntu.com/tutorial/tutorial-create-a-usb-stick-on-windows?_ga=2.113031757.891330654.1561860246-2033029163.1561860246#0
 
 Create own model and "pickle" (or other method)
-- TODO
+- https://machinelearningmastery.com/save-load-keras-deep-learning-models/
 
 DOCKER + FLASK
 https://medium.com/@mtngt/docker-flask-a-simple-tutorial-bbcb2f4110b5
