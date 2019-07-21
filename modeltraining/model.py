@@ -1,5 +1,7 @@
 ### Load image dataset
 
+# just for testing - most this content in .ipynb
+
 import imageio
 import numpy as np
 import h5py
@@ -13,4 +15,5 @@ f = h5py.File('../training_dataset.hdf5', 'r')
 dset = f['test_img']
 data = np.array(dset[:,:,:])
 plt.imshow(dset[1]) # change index to whatever pic to see
-imageio.imwrite('test2.jpg', dset[1])
+imageio.imwrite('test2.jpg', dset[50])
+
