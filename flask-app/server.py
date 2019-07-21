@@ -3,17 +3,26 @@ import os
 from numpy import stack
 from imageio import imread
 from keras.models import load_model
+from keras.models import model_from_json
+import json
 from PIL import Image
 from flask import (Flask, flash, render_template, redirect, request, session,
                    send_file, url_for)
 from werkzeug.utils import secure_filename
+import cv2
 
 from utils import (is_allowed_file, generate_barplot, generate_random_name,
                    make_thumbnail)
 
-NEURAL_NET_MODEL_PATH = os.environ['NEURAL_NET_MODEL_PATH']
-NEURAL_NET = load_model(NEURAL_NET_MODEL_PATH)
-NEURAL_NET._make_predict_function() 
+MODEL_PATH = os.environ['NEURAL_NET_MODEL_PATH'] # the .json file TODO: Change variable names
+WEIGHTS_PATH = os.environ['NEURAL_NET_WEIGHTS_PATH'] # the .h5 file
+
+with open(MODEL_PATH,'r') as f:
+    model_json = json.load(f)
+
+CLASSINATOR = model_from_json(model_json) # the model architecture as read from .json
+CLASSINATOR.load_weights(WEIGHTS_PATH) # Load weights from .h5 into the model
+CLASSINATOR._make_predict_function() 
     # as suggested attempt to fix bug with `model._make_predict_function()`
 
 app = Flask(__name__)
@@ -77,7 +86,10 @@ def predict(filename):
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     image_url = url_for('images', filename=filename)
     image_mtx = imread(image_path)
-    image_mtx = image_mtx.astype(float) / 255.
+    # image_mtx = image_mtx.astype(float) / 255.
+
+    image_mtx = cv2.resize(image_mtx, (150, 150), interpolation=cv2.INTER_CUBIC)
+    image_mtx = image_mtx / 255.
 
     try:
         # HACK: imageio seems to automatically infer grayscale images as a
@@ -87,9 +99,11 @@ def predict(filename):
     except IndexError:
         image_mtx = stack((image_mtx, image_mtx, image_mtx), axis=2)
 
-    image_mtx = image_mtx.reshape(-1, 128, 128, 3)
+    # image_mtx = image_mtx.reshape(-1, 128, 128, 3)
     # TODO: Celery defer this as it may take some time
-    predictions = NEURAL_NET.predict_proba(image_mtx)
+
+    
+    predictions = CLASSINATOR.predict(image_mtx.reshape(-1, 150, 150, 3))
     # TODO: Barplots with hover functionality
     script, div = generate_barplot(predictions)
 
