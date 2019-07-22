@@ -1,6 +1,6 @@
 # grandev
 
-This project is a web app that allows the user to upload an image, which the trained neural network will output whether the image is of the American singer, Ariana Grande. [Demo video](https://twitter.com/susan_shuc/status/1153060091656056832)
+This project is a web app that allows the user to upload an image, which the trained neural network will output whether the image is of the American singer, Ariana Grande. [Demo video](https://streamable.com/2w2re)
 
 ## Contents
 1. Web scraper for training data
